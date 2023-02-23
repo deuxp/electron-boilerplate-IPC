@@ -1,0 +1,13 @@
+.main {
+  height: 100vh;
+  width: 100vw;
+  border: 1px solid green;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100%;
+}
