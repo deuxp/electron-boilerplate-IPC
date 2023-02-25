@@ -1,0 +1,29 @@
+.box {
+  /* border: 1px solid black; */
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.button {
+  border: none;
+  padding: 16px;
+  background-color: #0f9688;
+  color: #fff;
+  box-shadow: 0 7px 15px #000;
+  border-radius: 5px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
+
+
+.button:hover {
+  background-color: coral;
+}
+
+.button:active {
+  padding: 14px;
+  box-shadow: 0 4px 5px #000;
+  background-color: rgb(185, 109, 83);
+}

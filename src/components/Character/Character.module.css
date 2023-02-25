@@ -1,0 +1,24 @@
+.box {
+  /* border: 1px black solid; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box p,
+h2 {
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 16px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif
+}
+
+.name {
+  font-size: 36px;
+}
+
+.image {
+  border-radius: 8px;
+  border: 5px solid #2a0505;
+}
