@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 function useData() {
   const [data, setData] = useState({});
 
   function getRandomIndex() {
-    let num = Math.random() * 826;
-    return Math.floor(num);
+    let num;
+    num = Math.random() * 825;
+    num = Math.floor(num);
+    return num > 0 ? num : 1;
   }
-  function getCharacter() {
+  const getCharacter = useCallback(() => {
     let index;
     index = getRandomIndex();
     fetch(`https://rickandmortyapi.com/api/character/${index}`)
@@ -23,11 +25,11 @@ function useData() {
       .catch(err => {
         console.log(err);
       });
-  }
+  }, []);
 
   useEffect(() => {
     getCharacter();
-  }, []);
+  }, [getCharacter]);
 
   return { data, getCharacter };
 }

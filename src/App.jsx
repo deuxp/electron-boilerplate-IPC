@@ -9,7 +9,6 @@ function App() {
   return (
     <div className={style.main}>
       <div className={style.box}>
-        {/* <h1>Rick and Morty Universe:</h1> */}
         <Character data={data} />
         <Button getCharacter={getCharacter}>Select Character</Button>
       </div>
