@@ -9,8 +9,8 @@
 .button {
   border: none;
   padding: 16px;
-  background-color: #000;
   background-color: #0f9688;
+  color: #fff;
   box-shadow: 0 7px 15px #000;
   border-radius: 5px;
   font-family: Verdana, Geneva, Tahoma, sans-serif
