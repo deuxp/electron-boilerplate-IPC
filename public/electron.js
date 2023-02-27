@@ -8,8 +8,14 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: false,
     webPreferences: {
       nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: true,
+      nodeIntegrationInWorker: false,
+      webviewTag: false,
+      // preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -51,3 +57,35 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+/////////////////////////
+// Security listeners //
+///////////////////////
+
+// if a new webview is loaded: prevent event
+app.on("web-contents-created", (event, contents) => {
+  contents.on("will-attach-webview", (event, webPreferences, params) => {
+    // Strip away preload scripts if unused or verify their location is legitimate
+    delete webPreferences.preload;
+
+    // Disable Node.js integration
+    webPreferences.nodeIntegration = false;
+
+    // prevent the event
+    event.preventDefault();
+  });
+});
+
+// listens for page navigation & stops
+app.on("web-contents-created", (event, contents) => {
+  contents.on("will-navigate", (event, navigationUrl) => {
+    event.preventDefault();
+  });
+});
+
+app.on("web-contents-created", (event, contents) => {
+  contents.setWindowOpenHandler(({ url }) => {
+    event.preventDefault();
+    return { action: "deny" };
+  });
+});
