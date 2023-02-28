@@ -122,7 +122,9 @@ function handleRequest(url, cb) {
 // Ipc Handler //
 /////////////////
 
-ipcMain.handle("getCharacter", () => {
+ipcMain.handle("getCharacter", event => {
+  const senderFrame = event.senderFrame.url;
+  if (!validateSenderFrame(senderFrame)) return;
   const apiUrl = generateUrl();
   if (validate(apiUrl.host)) {
     handleRequest(apiUrl.href, response => {
@@ -137,11 +139,11 @@ ipcMain.handle("getCharacter", () => {
 
 function getRandomIndex() {
   let num;
-  // 826 is the length of the character list
-  num = Math.random() * 826;
+  const characterListLength = 826;
+  num = Math.random() * characterListLength;
   num = Math.floor(num);
-  const result = num > 0 ? num : 1;
-  return result.toString();
+  num = num > 0 ? num : 1;
+  return num.toString();
 }
 
 function validate(host) {
@@ -149,11 +151,23 @@ function validate(host) {
   return host === validateHost;
 }
 
-// returns url object so it has all the properties and you should call the href after validating the host
+// returns url object
 function generateUrl() {
   const index = getRandomIndex();
   const api = new URL("https://rickandmortyapi.com");
   const resource = `api/character/${index}`;
   api.pathname = resource;
   return api;
+}
+
+function validateSenderFrame(frame) {
+  if (isDev) {
+    const host = "localhost:3000";
+    const frameSender = new URL(frame).host;
+    return frameSender === host;
+  }
+  const ext = ".html";
+  const name = "index";
+  const file = path.parse(frame);
+  return file.name === name && file.ext === ext;
 }
