@@ -1,6 +1,5 @@
+const { net, app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-
-const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
@@ -8,9 +7,10 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+let win;
 function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     // icon: "public/favicon.ico",
@@ -20,7 +20,7 @@ function createWindow() {
       sandbox: true,
       nodeIntegrationInWorker: false,
       webviewTag: false,
-      // preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -94,3 +94,66 @@ app.on("web-contents-created", (event, contents) => {
     return { action: "deny" };
   });
 });
+
+/////////////////
+// Net Module //
+///////////////
+
+function handleRequest(url, cb) {
+  const request = net.request(url);
+  request.on("response", response => {
+    const data = [];
+    response.on("data", chunk => {
+      data.push(chunk);
+    });
+    response.on("end", () => {
+      const json = Buffer.concat(data).toString();
+      cb(json);
+    });
+  });
+  request.on("error", () => {
+    console.log("Something went wrong with the internet");
+    cb(null);
+  });
+  request.end();
+}
+
+///////////////////
+// Ipc Handler //
+/////////////////
+
+ipcMain.handle("getCharacter", () => {
+  const apiUrl = generateUrl();
+  if (validate(apiUrl.host)) {
+    handleRequest(apiUrl.href, response => {
+      win.webContents.send("renderProcListener", response);
+    });
+  }
+});
+
+///////////////////////
+// Helper functions //
+/////////////////////
+
+function getRandomIndex() {
+  let num;
+  // 826 is the length of the character list
+  num = Math.random() * 826;
+  num = Math.floor(num);
+  const result = num > 0 ? num : 1;
+  return result.toString();
+}
+
+function validate(host) {
+  const validateHost = "rickandmortyapi.com";
+  return host === validateHost;
+}
+
+// returns url object so it has all the properties and you should call the href after validating the host
+function generateUrl() {
+  const index = getRandomIndex();
+  const api = new URL("https://rickandmortyapi.com");
+  const resource = `api/character/${index}`;
+  api.pathname = resource;
+  return api;
+}
