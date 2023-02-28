@@ -5,7 +5,6 @@ function useData() {
 
   const getCharacter = () => {
     window.bridge.fetchCharacter(response => {
-      console.log(response.id);
       setData(response);
     });
   };
