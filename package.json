@@ -26,6 +26,9 @@
     "package": "react-scripts build && electron-forge package",
     "make": "react-scripts build && electron-forge make"
   },
+  "config": {
+    "forge": "./forge.config.js"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -47,6 +50,7 @@
   "devDependencies": {
     "@electron-forge/cli": "^6.0.5",
     "@electron-forge/maker-deb": "^6.0.5",
+    "@electron-forge/maker-dmg": "^6.0.5",
     "@electron-forge/maker-rpm": "^6.0.5",
     "@electron-forge/maker-squirrel": "^6.0.5",
     "@electron-forge/maker-zip": "^6.0.5",
