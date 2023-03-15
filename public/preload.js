@@ -9,6 +9,33 @@ const ipcBridge = {
       listener.removeAllListeners("renderProcListener");
     });
   },
+  getHoney: callback => {
+    ipcRenderer.invoke("getHoney");
+    const listener = ipcRenderer.on("renderHoney", (event, response) => {
+      const data = JSON.parse(response);
+      console.log(data);
+      // callback(data);
+      listener.removeAllListeners("renderHoney");
+    });
+  },
+  refresh: callback => {
+    ipcRenderer.invoke("refresh");
+    const listener = ipcRenderer.on("renderRefresh", (event, response) => {
+      const data = JSON.parse(response);
+      console.log(data);
+      // callback(data);
+      listener.removeAllListeners("renderRefresh");
+    });
+  },
+  login: callback => {
+    ipcRenderer.invoke("login");
+    const listener = ipcRenderer.on("renderLogin", (event, response) => {
+      const data = JSON.parse(response);
+      console.log(data);
+      // callback(data);
+      listener.removeAllListeners("renderLogin");
+    });
+  },
 };
 
 process.once("loaded", () => {
