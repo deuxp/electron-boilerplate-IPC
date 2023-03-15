@@ -9,11 +9,21 @@ function useData() {
     });
   };
 
+  const getHoney = () => {
+    window.bridge.getHoney();
+  };
+  const refresh = () => {
+    window.bridge.refresh();
+  };
+  const login = () => {
+    window.bridge.login();
+  };
+
   useEffect(() => {
     getCharacter();
   }, []);
 
-  return { data, getCharacter };
+  return { data, getCharacter, getHoney, login, refresh };
 }
 
 export default useData;
