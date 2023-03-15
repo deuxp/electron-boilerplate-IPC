@@ -14,7 +14,7 @@ const ipcBridge = {
     const listener = ipcRenderer.on("renderHoney", (event, response) => {
       const data = JSON.parse(response);
       console.log(data);
-      // callback(data);
+      callback(data);
       listener.removeAllListeners("renderHoney");
     });
   },
@@ -23,16 +23,17 @@ const ipcBridge = {
     const listener = ipcRenderer.on("renderRefresh", (event, response) => {
       const data = JSON.parse(response);
       console.log(data);
-      // callback(data);
+      callback(data);
       listener.removeAllListeners("renderRefresh");
     });
   },
-  login: callback => {
-    ipcRenderer.invoke("login");
+  login: (credentials, callback) => {
+    const creds = JSON.stringify(credentials);
+    ipcRenderer.invoke("login", creds);
     const listener = ipcRenderer.on("renderLogin", (event, response) => {
       const data = JSON.parse(response);
       console.log(data);
-      // callback(data);
+      callback(data);
       listener.removeAllListeners("renderLogin");
     });
   },

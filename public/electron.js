@@ -171,23 +171,27 @@ function handleRequest(options, cb) {
   }
 }
 
-async function postLoginCredentials(url) {
-  const res = await axios.post(
-    url,
-    {
-      email: "hapa@gmail.com",
-      password: "psswd",
-    },
-    { withCredentials: true }
-  );
-  // array of 2 raw cookie dough
-  const cookies = res.headers["set-cookie"];
-  setCookie(cookies[0]);
-  setCookie(cookies[1]);
+async function postLoginCredentials(url, credentials) {
+  try {
+    const res = await axios.post(
+      url,
+      {
+        email: credentials?.email,
+        password: credentials?.password,
+      },
+      { withCredentials: true }
+    );
+    // array of 2 raw cookie dough
+    const cookies = res.headers["set-cookie"];
+    setCookie(cookies[0]);
+    setCookie(cookies[1]);
 
-  console.log(res.data);
-  const data = JSON.stringify(res.data);
-  return data;
+    console.log(res.data);
+    const data = JSON.stringify(res.data);
+    return data;
+  } catch (error) {
+    console.log("login request: ", error);
+  }
 }
 
 ///////////////////
@@ -242,10 +246,11 @@ ipcMain.handle("refresh", async event => {
   });
 });
 
-ipcMain.handle("login", async event => {
+ipcMain.handle("login", async (event, credentials) => {
+  credentials = JSON.parse(credentials);
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
-  const loginCredentials = await postLoginCredentials(login);
+  const loginCredentials = await postLoginCredentials(login, credentials);
   win.webContents.send("renderLogin", loginCredentials);
 });
 

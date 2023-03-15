@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 function useData() {
   const [data, setData] = useState({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getCharacter = () => {
     window.bridge.fetchCharacter(response => {
@@ -9,21 +10,16 @@ function useData() {
     });
   };
 
-  const getHoney = () => {
-    window.bridge.getHoney();
-  };
-  const refresh = () => {
-    window.bridge.refresh();
-  };
-  const login = () => {
-    window.bridge.login();
-  };
-
   useEffect(() => {
     getCharacter();
   }, []);
 
-  return { data, getCharacter, getHoney, login, refresh };
+  return {
+    data,
+    getCharacter,
+    isLoggedIn,
+    setIsLoggedIn,
+  };
 }
 
 export default useData;
