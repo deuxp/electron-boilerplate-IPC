@@ -37,6 +37,16 @@ const ipcBridge = {
       listener.removeAllListeners("renderLogin");
     });
   },
+  register: (credentials, callback) => {
+    const creds = JSON.stringify(credentials);
+    ipcRenderer.invoke("register", creds);
+    const listener = ipcRenderer.on("renderRegister", (event, response) => {
+      const data = JSON.parse(response);
+      console.log(data);
+      callback(data);
+      listener.removeAllListeners("renderRegister");
+    });
+  },
 };
 
 process.once("loaded", () => {
