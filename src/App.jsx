@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import style from "./App.module.css";
 import Character from "./components/Character/Character";
 import useData from "./hooks/useData";
@@ -6,14 +7,54 @@ import Login from "./components/Login/Login";
 
 function App() {
   const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
+  const [isRegistered, setIsRegistered] = useState(true);
+
+  const refreshToken = () => {
+    window.bridge.refresh(res => {
+      if (res.refresh) {
+        getCharacter();
+      }
+      if (!res.refresh) {
+        setIsLoggedIn(false);
+      }
+    });
+  };
+
+  useEffect(() => {
+    window.bridge.refresh(res => {
+      if (res.refresh) {
+        setIsLoggedIn(true);
+      }
+    });
+  }, []);
+
+  const handleGetCharacter = () => {
+    window.bridge.getHoney(res => {
+      console.log(res);
+      if (res.access) {
+        getCharacter();
+      }
+      if (!res.access) {
+        refreshToken();
+        console.log("access_token expired");
+      }
+    });
+  };
 
   return (
     <div className={style.main}>
       <div className={style.box}>
-        {!isLoggedIn && <Login setIsLoggedIn={setIsLoggedIn} />}
-        {isLoggedIn && <Character data={data} />}
+        {!isLoggedIn && (
+          <Login
+            setIsLoggedIn={setIsLoggedIn}
+            setIsRegistered={setIsRegistered}
+            isRegistered={isRegistered}
+          />
+        )}
+
+        {isLoggedIn && <Character data={data} getCharacter={getCharacter} />}
         {isLoggedIn && (
-          <Button getCharacter={getCharacter}>Roll Character</Button>
+          <Button getCharacter={handleGetCharacter}>Roll Character</Button>
         )}
       </div>
     </div>
