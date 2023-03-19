@@ -118,6 +118,7 @@ function splitCookie(string) {
 
 const refresh = "http://localhost:8080/api/user/refresh";
 const login = "http://localhost:8080/api/user/login";
+const register = "http://localhost:8080/api/user/register";
 
 // Set a cookie with the given cookie data;
 // may overwrite equivalent cookies if they exist.
@@ -168,6 +169,26 @@ function handleRequest(options, cb) {
   } catch (error) {
     console.log("handleRequest: ", error);
     return null;
+  }
+}
+
+async function registerNewUser(url, credentials) {
+  console.log("axios sending credentials", credentials);
+  try {
+    const res = await axios.post(
+      url,
+      {
+        email: credentials?.email,
+        password: credentials?.password,
+        password_confirm: credentials?.password_confirm,
+        name: credentials?.name,
+      },
+      { withCredentials: true }
+    );
+    const data = JSON.stringify(res.data);
+    return data;
+  } catch (error) {
+    console.log("New user not registered: ", error.message);
   }
 }
 
@@ -239,19 +260,34 @@ ipcMain.handle("refresh", async event => {
   };
   handleRequest(refreshOptions, response => {
     console.log(response);
-    // sesh.cookies.get({}).then(cookies => {
-    //   console.log(cookies);
-    // });
     win.webContents.send("renderRefresh", response);
   });
 });
+
+//////////////
+// REGISTER //
+//////////////
+
+ipcMain.handle("register", async (event, credentials) => {
+  // console.log("we are here in register");
+  // console.log("creds recieved from preload: ", credentials);
+  credentials = JSON.parse(credentials);
+  const senderFrame = event.senderFrame.url;
+  if (!validateSenderFrame(senderFrame)) return;
+  const registerStatus = await registerNewUser(register, credentials);
+  win.webContents.send("renderRegister", registerStatus);
+});
+
+////////////
+// LOGIN //
+//////////
 
 ipcMain.handle("login", async (event, credentials) => {
   credentials = JSON.parse(credentials);
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
-  const loginCredentials = await postLoginCredentials(login, credentials);
-  win.webContents.send("renderLogin", loginCredentials);
+  const loginStatus = await postLoginCredentials(login, credentials);
+  win.webContents.send("renderLogin", loginStatus);
 });
 
 ///////////////////////
