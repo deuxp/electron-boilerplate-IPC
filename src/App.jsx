@@ -6,8 +6,14 @@ import Button from "./components/Button/Button";
 import Login from "./components/Login/Login";
 
 function App() {
-  const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
-  const [isRegistered, setIsRegistered] = useState(true);
+  const {
+    needToRegister,
+    setNeedToRegister,
+    data,
+    getCharacter,
+    isLoggedIn,
+    setIsLoggedIn,
+  } = useData();
 
   const refreshToken = () => {
     window.bridge.refresh(res => {
@@ -47,8 +53,8 @@ function App() {
         {!isLoggedIn && (
           <Login
             setIsLoggedIn={setIsLoggedIn}
-            setIsRegistered={setIsRegistered}
-            isRegistered={isRegistered}
+            setNeedToRegister={setNeedToRegister}
+            needToRegister={needToRegister}
           />
         )}
 
