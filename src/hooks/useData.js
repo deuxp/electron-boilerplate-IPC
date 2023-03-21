@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function useData() {
   const [data, setData] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [needToRegister, setNeedToRegister] = useState(true);
 
   const getCharacter = () => {
     window.bridge.fetchCharacter(response => {
@@ -10,15 +11,13 @@ function useData() {
     });
   };
 
-  useEffect(() => {
-    getCharacter();
-  }, []);
-
   return {
     data,
     getCharacter,
     isLoggedIn,
     setIsLoggedIn,
+    needToRegister,
+    setNeedToRegister,
   };
 }
 
