@@ -42,7 +42,7 @@ function App() {
       }
       if (!res.access) {
         refreshToken();
-        console.log("access_token expired");
+        console.log("access_token expired, refreshing");
       }
     });
   };
