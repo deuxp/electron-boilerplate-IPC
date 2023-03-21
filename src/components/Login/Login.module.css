@@ -7,13 +7,13 @@
   border-radius: 5px;
   margin: auto;
   inset: 0;
-  height: 40%;
+  height: max-content;
   width: 50%;
   background-color: #fff;
   overflow-y: scroll;
   color: #000;
-  left: 0;
-  right: auto;
+  /* left: 0; */
+  /* right: auto; */
 }
 
 .box input {
@@ -25,4 +25,26 @@
 
 .box input:focus {
   border: none;
+}
+
+.box button {
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+
+.register {
+  color: blue;
+  cursor: pointer;
+  padding-bottom: 1em;
+}
+
+.register:hover {
+  color: rgb(137, 137, 255);
+}
+
+.msg {
+  color: red;
+  font-style: italic;
+  margin: 0;
+  padding-bottom: 0.5em;
 }
