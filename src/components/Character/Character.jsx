@@ -1,13 +1,16 @@
-import React from "react";
+import { useEffect } from "react";
 import style from "./Character.module.css";
 
-function Character({ data }) {
-  // const print = JSON.stringify(data);
+function Character({ data, getCharacter }) {
+  useEffect(() => {
+    getCharacter();
+  }, []);
+
   return (
     <div className={style.box}>
       <p className={style.name}>{data.name}</p>
       <p>({data.species})</p>
-      <img className={style.image} src={data.image} alt="character" />
+      {data && <img className={style.image} src={data.image} alt="character" />}
     </div>
   );
 }
