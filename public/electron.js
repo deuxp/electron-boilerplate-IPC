@@ -168,7 +168,7 @@ function handleRequest(options, cb) {
     request.end();
   } catch (error) {
     console.log("handleRequest: ", error);
-    return null;
+    cb(null);
   }
 }
 
@@ -211,7 +211,8 @@ async function postLoginCredentials(url, credentials) {
     const data = JSON.stringify(res.data);
     return data;
   } catch (error) {
-    console.log("login request: ", error);
+    console.log("login request: ", error.message);
+    return '{"login": false}';
   }
 }
 
