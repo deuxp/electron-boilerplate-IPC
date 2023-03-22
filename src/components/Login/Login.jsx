@@ -30,9 +30,7 @@ function Login({ setIsLoggedIn }) {
     setName("");
     setConfirm("");
     setPassword("");
-    setRequired(false);
-    setDoPassMatch(false);
-    setIsEmail(false);
+    clearMsgs();
     setNewPassword(false);
   };
   const backToLogin = () => {
@@ -64,11 +62,9 @@ function Login({ setIsLoggedIn }) {
       clearFormData();
       if (res.login) {
         setIsLoggedIn(true);
-        setLoginFail(false);
-        setMessage("");
+        clearMsgs();
       }
       if (!res.login) {
-        console.log("login fail");
         setLoginFail(true);
       }
     });
@@ -113,7 +109,7 @@ function Login({ setIsLoggedIn }) {
       // this is where you clear everything and login
       if (res.update) {
         clearFormData();
-        setNeedToRegister(true); // show login
+        setNeedToRegister(true); // show login view
         setMessage("Please re-enter your login information");
       }
     });
