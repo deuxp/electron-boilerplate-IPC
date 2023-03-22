@@ -119,6 +119,8 @@ function splitCookie(string) {
 const refresh = "http://localhost:8080/api/user/refresh";
 const login = "http://localhost:8080/api/user/login";
 const register = "http://localhost:8080/api/user/register";
+const reset = "http://localhost:8080/api/user/reset";
+const newPassword = "http://localhost:8080/api/user/new-password";
 
 // Set a cookie with the given cookie data;
 // may overwrite equivalent cookies if they exist.
@@ -172,6 +174,50 @@ function handleRequest(options, cb) {
   }
 }
 
+async function postNewPassword(url, credentials) {
+  const { email, password, password_confirm } = credentials;
+  console.log(credentials);
+  try {
+    const res = await axios.post(
+      url,
+      {
+        email,
+        password,
+        password_confirm,
+      },
+      { withCredentials: true }
+    );
+    const data = JSON.stringify(res.data);
+    return data;
+  } catch (error) {
+    console.log(
+      "Main::problem posting new password, server error?: ",
+      error.message
+    );
+    return '{"update": false}';
+  }
+}
+
+async function resetPassword(url, email) {
+  try {
+    const res = await axios.post(
+      url,
+      {
+        email,
+      },
+      { withCredentials: true }
+    );
+    const data = JSON.stringify(res.data);
+    return data;
+  } catch (error) {
+    console.log(
+      "Main::problem resetting password, server error?: ",
+      error.message
+    );
+    return '{"reset": false}';
+  }
+}
+
 async function registerNewUser(url, credentials) {
   console.log("axios sending credentials", credentials);
   try {
@@ -189,6 +235,7 @@ async function registerNewUser(url, credentials) {
     return data;
   } catch (error) {
     console.log("New user not registered: ", error.message);
+    return '{"register": false}';
   }
 }
 
@@ -265,13 +312,36 @@ ipcMain.handle("refresh", async event => {
   });
 });
 
+////////////// ///////
+// RESET PASSWORD  //
+////////////// /////
+
+ipcMain.handle("resetPassword", async (event, email) => {
+  const senderFrame = event.senderFrame.url;
+  if (!validateSenderFrame(senderFrame)) return;
+  // POST options function
+  const newPassword = await resetPassword(reset, email);
+  console.log(newPassword);
+  win.webContents.send("renderResetPassword", newPassword);
+});
+
+////////////// /////////
+// POST NEW PASSWORD //
+////////////// ///////
+
+ipcMain.handle("postNewPassword", async (event, credentials) => {
+  credentials = JSON.parse(credentials);
+  const senderFrame = event.senderFrame.url;
+  if (!validateSenderFrame(senderFrame)) return;
+  const postPassword = await postNewPassword(newPassword, credentials);
+  win.webContents.send("renderNewPassword", postPassword);
+});
+
 //////////////
 // REGISTER //
 //////////////
 
 ipcMain.handle("register", async (event, credentials) => {
-  // console.log("we are here in register");
-  // console.log("creds recieved from preload: ", credentials);
   credentials = JSON.parse(credentials);
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
