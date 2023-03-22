@@ -28,17 +28,37 @@
 }
 
 .box button {
-  margin-bottom: 2em;
+  margin-bottom: 1em;
   margin-top: 2em;
+  cursor: pointer;
+}
+
+.forgot,
+.register,
+.email,
+.back {
+  color: blue;
+  cursor: pointer;
+}
+
+.forgot,
+.email {
+  font-size: 12px;
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+.email {
+  cursor: default;
 }
 
 .register {
-  color: blue;
-  cursor: pointer;
   padding-bottom: 1em;
 }
 
-.register:hover {
+.register:hover,
+.forgot:hover,
+.back:hover {
   color: rgb(137, 137, 255);
 }
 
