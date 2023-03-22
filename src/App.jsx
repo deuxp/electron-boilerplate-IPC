@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import style from "./App.module.css";
 import Character from "./components/Character/Character";
 import useData from "./hooks/useData";
@@ -6,14 +6,7 @@ import Button from "./components/Button/Button";
 import Login from "./components/Login/Login";
 
 function App() {
-  const {
-    needToRegister,
-    setNeedToRegister,
-    data,
-    getCharacter,
-    isLoggedIn,
-    setIsLoggedIn,
-  } = useData();
+  const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
 
   const refreshToken = () => {
     window.bridge.refresh(res => {
@@ -50,13 +43,7 @@ function App() {
   return (
     <div className={style.main}>
       <div className={style.box}>
-        {!isLoggedIn && (
-          <Login
-            setIsLoggedIn={setIsLoggedIn}
-            setNeedToRegister={setNeedToRegister}
-            needToRegister={needToRegister}
-          />
-        )}
+        {!isLoggedIn && <Login setIsLoggedIn={setIsLoggedIn} />}
 
         {isLoggedIn && <Character data={data} getCharacter={getCharacter} />}
         {isLoggedIn && (
