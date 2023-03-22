@@ -1,17 +1,29 @@
 import { useState } from "react";
 import style from "./Login.module.css";
 
-function Login({ setIsLoggedIn, setNeedToRegister, needToRegister }) {
+function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
+  const [needToRegister, setNeedToRegister] = useState(true);
+  const [newPassword, setNewPassword] = useState(false);
 
   // required fields verification
   const [loginFail, setLoginFail] = useState(false);
   const [required, setRequired] = useState(false);
   const [doPassMatch, setDoPassMatch] = useState(false);
   const [isEmail, setIsEmail] = useState(false);
+  const [reset, setReset] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const clearMsgs = () => {
+    setLoginFail(false);
+    setRequired(false);
+    setDoPassMatch(false);
+    setIsEmail(false);
+    setMessage("");
+  };
 
   const clearFormData = () => {
     setEmail("");
@@ -21,15 +33,39 @@ function Login({ setIsLoggedIn, setNeedToRegister, needToRegister }) {
     setRequired(false);
     setDoPassMatch(false);
     setIsEmail(false);
+    setNewPassword(false);
+  };
+  const backToLogin = () => {
+    setReset(false);
+    setNewPassword(false);
+    clearFormData();
+    clearMsgs();
   };
 
-  const login = (email, password, password_confirm) => {
-    const credentials = { email, password, password_confirm };
+  const handleRegisterToggle = () => {
+    setNeedToRegister(prev => !prev);
+    setReset(false);
+    setMessage("");
+    clearFormData();
+  };
+
+  // const handleForgot = () => {
+  //   setReset(true);
+  // };
+
+  function validEmail(email) {
+    const re = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    if (re.test(email)) return true;
+    return false;
+  }
+  const login = (email, password) => {
+    const credentials = { email, password };
     window.bridge.login(credentials, res => {
       clearFormData();
       if (res.login) {
         setIsLoggedIn(true);
         setLoginFail(false);
+        setMessage("");
       }
       if (!res.login) {
         console.log("login fail");
@@ -54,46 +90,75 @@ function Login({ setIsLoggedIn, setNeedToRegister, needToRegister }) {
     });
   };
 
+  const resetPassword = email => {
+    window.bridge.resetPassword(email, res => {
+      if (!res.reset) {
+        setMessage("User not found, please re-enter email");
+        setEmail("");
+        console.log("password reset error");
+      }
+      if (res.reset) {
+        setNewPassword(res.reset);
+        setReset(false);
+      }
+    });
+  };
+
+  const postNewPassword = (email, password, password_confirm) => {
+    const credentials = { email, password, password_confirm };
+    window.bridge.postNewPassword(credentials, res => {
+      if (!res.update) {
+        return setMessage("Token has expired, please check email");
+      }
+      // this is where you clear everything and login
+      if (res.update) {
+        clearFormData();
+        setNeedToRegister(true); // show login
+        setMessage("Please re-enter your login information");
+      }
+    });
+  };
+
   const handleOnSubmit = e => {
     e.preventDefault();
-    if (!needToRegister && password !== confirm) {
-      setDoPassMatch(true);
-      return;
+    clearMsgs();
+    if ((!needToRegister || newPassword) && password !== confirm) {
+      return setDoPassMatch(true);
     }
-
-    // required fields logic
-
-    // Login: if "needToRegister" && (email empty || password empty)
-    // set error msg::required fields; return
-    if (needToRegister && (!email || !password)) return setRequired(true);
-
-    // Register: if "!needToRegister" && (name ||  email empty || password empty)
-    // set error msg::required fields; return
+    // Validate Fields:
+    // Login: if "needToRegister"
+    if (needToRegister && !reset && (!email || !password))
+      return setRequired(true);
+    // Register: if "!needToRegister"
     if (!needToRegister && (!name || !email || !password))
       return setRequired(true);
-
     if (!validEmail(email)) return setIsEmail(true);
-
-    // matching passwords: if password !== confirm
-    // set error msg::passwords; return
+    // matching passwords:
     if (!needToRegister && password !== confirm) return setDoPassMatch(true);
 
-    if (needToRegister) login(email, password);
-    if (!needToRegister) register(email, password, confirm, name);
+    // Action:
+    if (reset) return resetPassword(email);
+    if (newPassword) return postNewPassword(email, password, confirm);
+    if (needToRegister) return login(email, password);
+    if (!needToRegister) return register(email, password, confirm, name);
   };
 
   return (
     <>
       <div className={style.box}>
         <h1>{needToRegister ? "User Login" : "Register New User"}</h1>
-        <div
-          onClick={() => setNeedToRegister(prev => !prev)}
-          className={style.register}
-        >
-          {needToRegister ? "register" : "login"}
-        </div>
-
-        {!needToRegister && (
+        {(reset || newPassword) && (
+          // {reset && !newPassword && (
+          <div onClick={backToLogin} className={style.register}>
+            Back to Login
+          </div>
+        )}
+        {!reset && !newPassword && (
+          <div onClick={handleRegisterToggle} className={style.register}>
+            {needToRegister ? "register" : "login"}
+          </div>
+        )}
+        {!needToRegister && !newPassword && !reset && (
           <input
             onChange={e => setName(e.target.value)}
             value={name}
@@ -101,26 +166,40 @@ function Login({ setIsLoggedIn, setNeedToRegister, needToRegister }) {
             placeholder="Name"
           />
         )}
-
-        <input
-          onChange={e => setEmail(e.target.value)}
-          value={email}
-          type="email"
-          placeholder="user@example.com"
-        />
-        <input
-          onChange={e => setPassword(e.target.value)}
-          value={password}
-          type="password"
-          placeholder="password"
-        />
-        {!needToRegister && (
+        {!newPassword && (
+          <input
+            onChange={e => setEmail(e.target.value)}
+            value={email}
+            type="email"
+            placeholder="user@example.com"
+          />
+        )}
+        {(!reset || newPassword) && (
+          <input
+            onChange={e => setPassword(e.target.value)}
+            value={password}
+            type="password"
+            placeholder="password"
+          />
+        )}
+        {!reset && needToRegister && !newPassword && (
+          <div onClick={() => setReset(true)} className={style.forgot}>
+            reset password
+          </div>
+        )}
+        {(!needToRegister || newPassword) && (
           <input
             onChange={e => setConfirm(e.target.value)}
             value={confirm}
             type="password"
             placeholder="re-enter password"
           />
+        )}
+        {reset && <div className={style.email}>Enter your email to reset</div>}
+        {newPassword && (
+          <div className={style.email}>
+            Check your Email<br></br> Then enter new Password
+          </div>
         )}
         <button onClick={handleOnSubmit}>submit</button>
         {doPassMatch && <p className={style.msg}>*Passwords do not match</p>}
@@ -131,14 +210,9 @@ function Login({ setIsLoggedIn, setNeedToRegister, needToRegister }) {
             *Login/Registration attempt failed, please try again
           </p>
         )}
+        <p className={style.msg}>{message}</p>
       </div>
     </>
   );
 }
 export default Login;
-
-function validEmail(email) {
-  const re = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
-  if (re.test(email)) return true;
-  return false;
-}
