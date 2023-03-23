@@ -115,12 +115,18 @@ function splitCookie(string) {
 
   return { name, value };
 }
+///////////////
+// API URLS //
+/////////////
 
-const refresh = "http://localhost:8080/api/user/refresh";
-const login = "http://localhost:8080/api/user/login";
-const register = "http://localhost:8080/api/user/register";
-const reset = "http://localhost:8080/api/user/reset";
-const newPassword = "http://localhost:8080/api/user/new-password";
+const localBase = "http://localhost:8080";
+const deployBase = "rnm-login-server-production.up.railway.app";
+
+const refresh = `${deployBase}/api/user/refresh`;
+const login = `${deployBase}/api/user/login`;
+const register = `${deployBase}/api/user/register`;
+const reset = `${deployBase}/api/user/reset`;
+const newPassword = `${deployBase}/api/user/new-password`;
 
 // Set a cookie with the given cookie data;
 // may overwrite equivalent cookies if they exist.
