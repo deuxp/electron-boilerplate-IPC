@@ -133,7 +133,8 @@ const newPassword = `${deployBase}/api/user/new-password`;
 function setCookie(rawCookie) {
   const { name, value } = splitCookie(rawCookie);
   const cookie = {
-    url: "http://localhost:8080",
+    url: deployBase,
+    // url: "http://localhost:8080",
     name,
     value,
     httpOnly: true,
@@ -277,7 +278,7 @@ ipcMain.handle("getCharacter", async event => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
   const getOptions = {
-    url: "http://localhost:8080/api/characters",
+    url: `${deployBase}/api/characters`,
     method: "GET",
     credentials: "include",
     session: sesh,
@@ -291,7 +292,7 @@ ipcMain.handle("getHoney", async event => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
   const getOptions = {
-    url: "http://localhost:8080/api/user",
+    url: `${deployBase}/api/user`,
     method: "GET",
     credentials: "include",
     session: sesh,
