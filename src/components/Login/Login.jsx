@@ -2,26 +2,19 @@ import { useState } from "react";
 import style from "./Login.module.css";
 
 function Login({ setIsLoggedIn }) {
+  // Form Data
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
+
+  // Form State
   const [needToRegister, setNeedToRegister] = useState(true);
   const [newPassword, setNewPassword] = useState(false);
-
-  // required fields verification
-  const [loginFail, setLoginFail] = useState(false);
-  const [required, setRequired] = useState(false);
-  const [doPassMatch, setDoPassMatch] = useState(false);
-  const [isEmail, setIsEmail] = useState(false);
   const [reset, setReset] = useState(false);
   const [message, setMessage] = useState("");
 
   const clearMsgs = () => {
-    setLoginFail(false);
-    setRequired(false);
-    setDoPassMatch(false);
-    setIsEmail(false);
     setMessage("");
   };
 
@@ -43,13 +36,14 @@ function Login({ setIsLoggedIn }) {
   const handleRegisterToggle = () => {
     setNeedToRegister(prev => !prev);
     setReset(false);
-    setMessage("");
+    clearMsgs();
     clearFormData();
   };
 
-  // const handleForgot = () => {
-  //   setReset(true);
-  // };
+  const handleResetView = () => {
+    setReset(true);
+    clearMsgs();
+  };
 
   function validEmail(email) {
     const re = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
@@ -65,7 +59,7 @@ function Login({ setIsLoggedIn }) {
         clearMsgs();
       }
       if (!res.login) {
-        setLoginFail(true);
+        setMessage("Failed to login, please try again");
       }
     });
   };
@@ -81,7 +75,7 @@ function Login({ setIsLoggedIn }) {
       if (!res.register) {
         console.log("user not registered try again later");
         clearFormData();
-        setLoginFail(true);
+        setMessage("Failed to register new user, please try again");
       }
     });
   };
@@ -118,19 +112,19 @@ function Login({ setIsLoggedIn }) {
   const handleOnSubmit = e => {
     e.preventDefault();
     clearMsgs();
+
+    // matching passwords:
     if ((!needToRegister || newPassword) && password !== confirm) {
-      return setDoPassMatch(true);
+      return setMessage("Passwords do not match");
     }
     // Validate Fields:
     // Login: if "needToRegister"
     if (needToRegister && !reset && (!email || !password))
-      return setRequired(true);
+      return setMessage("*Please fill required fields");
     // Register: if "!needToRegister"
     if (!needToRegister && (!name || !email || !password))
-      return setRequired(true);
-    if (!validEmail(email)) return setIsEmail(true);
-    // matching passwords:
-    if (!needToRegister && password !== confirm) return setDoPassMatch(true);
+      return setMessage("*Please fill required fields");
+    if (!validEmail(email)) return setMessage("Not a valid email address");
 
     // Action:
     if (reset) return resetPassword(email);
@@ -144,7 +138,6 @@ function Login({ setIsLoggedIn }) {
       <div className={style.box}>
         <h1>{needToRegister ? "User Login" : "Register New User"}</h1>
         {(reset || newPassword) && (
-          // {reset && !newPassword && (
           <div onClick={backToLogin} className={style.register}>
             Back to Login
           </div>
@@ -179,7 +172,7 @@ function Login({ setIsLoggedIn }) {
           />
         )}
         {!reset && needToRegister && !newPassword && (
-          <div onClick={() => setReset(true)} className={style.forgot}>
+          <div onClick={handleResetView} className={style.forgot}>
             reset password
           </div>
         )}
@@ -198,14 +191,6 @@ function Login({ setIsLoggedIn }) {
           </div>
         )}
         <button onClick={handleOnSubmit}>submit</button>
-        {doPassMatch && <p className={style.msg}>*Passwords do not match</p>}
-        {required && <p className={style.msg}>*Please fill required fields</p>}
-        {isEmail && <p className={style.msg}>*Not a valid email address</p>}
-        {loginFail && (
-          <p className={style.msg}>
-            *Login/Registration attempt failed, please try again
-          </p>
-        )}
         <p className={style.msg}>{message}</p>
       </div>
     </>
