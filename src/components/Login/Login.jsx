@@ -69,8 +69,10 @@ function Login({ setIsLoggedIn }) {
     window.bridge.register(credentials, res => {
       console.log("what is access: ", res);
       if (res.register) {
-        login(email, password, password_confirm);
+        // login(email, password, password_confirm);
         clearFormData();
+        setNeedToRegister(true); // show login view
+        setMessage("Please re-enter your login information");
       }
       if (!res.register) {
         console.log("user not registered try again later");
@@ -98,7 +100,7 @@ function Login({ setIsLoggedIn }) {
     const credentials = { email, password, password_confirm };
     window.bridge.postNewPassword(credentials, res => {
       if (!res.update) {
-        return setMessage("Token has expired, please check email");
+        return setMessage("Please check your email");
       }
       // this is where you clear everything and login
       if (res.update) {
