@@ -9,6 +9,7 @@ function App() {
   const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
 
   // make promise ooo
+  // make promise ooo
   const refreshToken = () => {
     window.bridge.refresh(res => {
       if (res.refresh) {
