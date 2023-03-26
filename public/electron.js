@@ -119,14 +119,14 @@ function splitCookie(string) {
 // API URLS //
 /////////////
 
-const localBase = "http://localhost:8080";
-const deployBase = "rnm-login-server-production.up.railway.app";
+const deployBase = "http://localhost:8080";
+// const deployBase = "https://rnm-login-server-production.up.railway.app";
 
 const refresh = `${deployBase}/api/user/refresh`;
 const login = `${deployBase}/api/user/login`;
 const register = `${deployBase}/api/user/register`;
-const reset = `${deployBase}/api/user/reset`;
-const newPassword = `${deployBase}/api/user/new-password`;
+const reset = `${deployBase}/api/reset`;
+const newPassword = `${deployBase}/api/reset/new-password`;
 
 // Set a cookie with the given cookie data;
 // may overwrite equivalent cookies if they exist.
@@ -183,7 +183,7 @@ function handleRequest(options, cb) {
 
 async function postNewPassword(url, credentials) {
   const { email, password, password_confirm } = credentials;
-  console.log(credentials);
+  // console.log(credentials);
   try {
     const res = await axios.post(
       url,
@@ -226,7 +226,7 @@ async function resetPassword(url, email) {
 }
 
 async function registerNewUser(url, credentials) {
-  console.log("axios sending credentials", credentials);
+  // console.log("axios sending credentials", credentials);
   try {
     const res = await axios.post(
       url,
