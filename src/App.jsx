@@ -8,6 +8,7 @@ import Login from "./components/Login/Login";
 function App() {
   const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
 
+  // refresh -> promise?
   const refreshToken = () => {
     window.bridge.refresh(res => {
       if (res.refresh) {
