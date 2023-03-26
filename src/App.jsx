@@ -8,10 +8,8 @@ import Login from "./components/Login/Login";
 function App() {
   const { data, getCharacter, isLoggedIn, setIsLoggedIn } = useData();
 
-  // make promise ooo
-  // make promise ooo
   const refreshToken = () => {
-    window.bridge.refresh(res => {
+    window.bridge.refreshAccess(res => {
       if (res.refresh) {
         getCharacter();
       }
@@ -22,7 +20,7 @@ function App() {
   };
 
   useEffect(() => {
-    window.bridge.refresh(res => {
+    window.bridge.refreshAccess(res => {
       if (res.refresh) {
         setIsLoggedIn(true);
       }
@@ -30,7 +28,7 @@ function App() {
   }, []);
 
   const handleGetCharacter = () => {
-    window.bridge.getHoney(res => {
+    window.bridge.verifyAccess(res => {
       console.log(res);
       if (res.access) {
         getCharacter();

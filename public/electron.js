@@ -288,7 +288,7 @@ ipcMain.handle("getCharacter", async event => {
   });
 });
 
-ipcMain.handle("getHoney", async event => {
+ipcMain.handle("verifyAccess", async event => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
   const getOptions = {
@@ -299,11 +299,11 @@ ipcMain.handle("getHoney", async event => {
   };
   handleRequest(getOptions, response => {
     console.log(response);
-    win.webContents.send("renderHoney", response);
+    win.webContents.send("renderAccess", response);
   });
 });
 
-ipcMain.handle("refresh", async event => {
+ipcMain.handle("refreshAccess", async event => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
 
@@ -315,7 +315,7 @@ ipcMain.handle("refresh", async event => {
   };
   handleRequest(refreshOptions, response => {
     console.log(response);
-    win.webContents.send("renderRefresh", response);
+    win.webContents.send("renderRefreshAccess", response);
   });
 });
 

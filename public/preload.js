@@ -9,22 +9,22 @@ const ipcBridge = {
       listener.removeAllListeners("renderProcListener");
     });
   },
-  getHoney: callback => {
-    ipcRenderer.invoke("getHoney");
-    const listener = ipcRenderer.on("renderHoney", (event, res) => {
+  verifyAccess: callback => {
+    ipcRenderer.invoke("verifyAccess");
+    const listener = ipcRenderer.on("renderAccess", (event, res) => {
       const data = JSON.parse(res);
       console.log(data);
       callback(data);
-      listener.removeAllListeners("renderHoney");
+      listener.removeAllListeners("renderAccess");
     });
   },
-  refresh: callback => {
-    ipcRenderer.invoke("refresh");
-    const listener = ipcRenderer.on("renderRefresh", (event, res) => {
+  refreshAccess: callback => {
+    ipcRenderer.invoke("refreshAccess");
+    const listener = ipcRenderer.on("renderRefreshAccess", (event, res) => {
       const data = JSON.parse(res);
       console.log(data);
       callback(data);
-      listener.removeAllListeners("renderRefresh");
+      listener.removeAllListeners("renderRefreshAccess");
     });
   },
   login: (credentials, callback) => {
