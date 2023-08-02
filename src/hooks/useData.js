@@ -5,7 +5,7 @@ function useData() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getCharacter = () => {
-    window.bridge.fetchCharacter(response => {
+    window.bridge.fetchCharacter((response) => {
       setData(response);
     });
   };

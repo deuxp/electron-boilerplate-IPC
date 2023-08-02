@@ -119,8 +119,8 @@ function splitCookie(string) {
 // API URLS //
 /////////////
 
-const deployBase = "http://localhost:8080";
-// const deployBase = "https://rnm-login-server-production.up.railway.app";
+// const deployBase = "http://localhost:8080";
+const deployBase = "https://rnm-login-server-production.up.railway.app";
 
 const refresh = `${deployBase}/api/user/refresh`;
 const login = `${deployBase}/api/user/login`;
@@ -147,7 +147,7 @@ function setCookie(rawCookie) {
     () => {
       // console.log(`\n${name} cookie is set\n`);
     },
-    error => {
+    (error) => {
       console.error(error);
     }
   );
@@ -160,9 +160,9 @@ function setCookie(rawCookie) {
 function handleRequest(options, cb) {
   try {
     const request = net.request(options);
-    request.on("response", response => {
+    request.on("response", (response) => {
       const data = [];
-      response.on("data", chunk => {
+      response.on("data", (chunk) => {
         data.push(chunk);
       });
       response.on("end", () => {
@@ -274,7 +274,7 @@ async function postLoginCredentials(url, credentials) {
 // Ipc Handler //
 /////////////////
 
-ipcMain.handle("getCharacter", async event => {
+ipcMain.handle("fetchCharacter", async (event) => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
   const getOptions = {
@@ -283,12 +283,12 @@ ipcMain.handle("getCharacter", async event => {
     credentials: "include",
     session: sesh,
   };
-  handleRequest(getOptions, response => {
+  handleRequest(getOptions, async (response) => {
     win.webContents.send("renderProcListener", response);
   });
 });
 
-ipcMain.handle("verifyAccess", async event => {
+ipcMain.handle("verifyAccess", async (event) => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
   const getOptions = {
@@ -297,13 +297,13 @@ ipcMain.handle("verifyAccess", async event => {
     credentials: "include",
     session: sesh,
   };
-  handleRequest(getOptions, response => {
+  handleRequest(getOptions, (response) => {
     console.log(response);
     win.webContents.send("renderAccess", response);
   });
 });
 
-ipcMain.handle("refreshAccess", async event => {
+ipcMain.handle("refreshAccess", async (event) => {
   const senderFrame = event.senderFrame.url;
   if (!validateSenderFrame(senderFrame)) return;
 
@@ -313,7 +313,7 @@ ipcMain.handle("refreshAccess", async event => {
     credentials: "include",
     session: sesh,
   };
-  handleRequest(refreshOptions, response => {
+  handleRequest(refreshOptions, (response) => {
     console.log(response);
     win.webContents.send("renderRefreshAccess", response);
   });

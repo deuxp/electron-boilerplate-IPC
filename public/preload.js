@@ -1,15 +1,15 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 const ipcBridge = {
-  fetchCharacter: callback => {
-    ipcRenderer.invoke("getCharacter");
+  fetchCharacter: (callback) => {
+    ipcRenderer.invoke("fetchCharacter");
     const listener = ipcRenderer.on("renderProcListener", (event, res) => {
       const data = JSON.parse(res);
       callback(data);
       listener.removeAllListeners("renderProcListener");
     });
   },
-  verifyAccess: callback => {
+  verifyAccess: (callback) => {
     ipcRenderer.invoke("verifyAccess");
     const listener = ipcRenderer.on("renderAccess", (event, res) => {
       const data = JSON.parse(res);
@@ -18,7 +18,7 @@ const ipcBridge = {
       listener.removeAllListeners("renderAccess");
     });
   },
-  refreshAccess: callback => {
+  refreshAccess: (callback) => {
     ipcRenderer.invoke("refreshAccess");
     const listener = ipcRenderer.on("renderRefreshAccess", (event, res) => {
       const data = JSON.parse(res);
