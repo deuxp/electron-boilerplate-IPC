@@ -6,6 +6,14 @@ module.exports = {
     asar: true,
   },
   rebuildConfig: {},
+
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      repository: { owner: "deuxp", name: "rnm-electron-updater-example" },
+      prerelease: true,
+    },
+  ],
   makers: [
     {
       name: "@electron-forge/maker-squirrel",
